@@ -11,3 +11,11 @@ app.get("/home", (req, res) => {
 server.listen(3001, () => {
   console.log("Server running");
 });
+
+io.on("connection", (socket) => {
+  console.log(`UserId: ${socket.id}`);
+
+  socket.on("message", (data) => {
+    socket.broadcast.emit("message", data);
+  });
+});
