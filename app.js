@@ -16,6 +16,6 @@ io.on("connection", (socket) => {
   console.log(`UserId: ${socket.id}`);
 
   socket.on("message", (data) => {
-    socket.broadcast.emit("message", data);
+    socket.broadcast.emit("message", `${socket.id} messaged : ${data}`);
   });
 });
