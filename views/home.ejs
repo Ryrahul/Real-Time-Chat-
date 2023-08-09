@@ -6,7 +6,7 @@
     <title>Chat</title>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <style>
-        <style>
+       
     body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -61,7 +61,7 @@
         border-radius: 5px;
     }
 
-    /* Style for the upload button */
+   
     #Pictures {
         margin-left: 10px;
         background-color: #28a745;
@@ -86,6 +86,10 @@
            
     const socket = io("http://localhost:3001");
     socket.emit("connection")
+    socket.on("requestName", () => {
+            const name = prompt("Please enter your name:");
+            socket.emit("userName", name);
+        });
 
 socket.on("message", message => {
     const chatDiv = document.getElementById("chat");

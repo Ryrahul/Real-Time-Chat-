@@ -5,8 +5,7 @@ const fs = require("fs");
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 app.set("view engine", "ejs");
-
-app.get("/home", (req, res) => {
+const users = app.get("/home", (req, res) => {
   res.render("home");
 });
 server.listen(3001, () => {
@@ -14,14 +13,23 @@ server.listen(3001, () => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`UserId: ${socket.id}`);
+  socket.emit("requestName");
+
+  socket.on("userName", (name) => {
+    users[socket.id] = name;
+    const welcomeMessage = `Welcome, ${name}!`;
+    socket.emit("message", welcomeMessage);
+  });
 
   socket.on("message", (data) => {
-    socket.broadcast.emit("message", `${socket.id} messaged : ${data}`);
+    const Username = users[socket.id];
+    socket.broadcast.emit("message", `${Username} messaged : ${data}`);
   });
 
   socket.on("image", (image) => {
-    socket.broadcast.emit("message", `${socket.id} sent:`);
+    const Username = users[socket.id];
+
+    socket.broadcast.emit("message", `${Username} sent:`);
     socket.broadcast.emit("image", image);
   });
 });
