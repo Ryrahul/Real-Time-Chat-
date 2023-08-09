@@ -96,11 +96,15 @@ socket.on("message", message => {
     const messageDiv = document.createElement("div");
     messageDiv.textContent = message;
     chatDiv.appendChild(messageDiv);
+     
+
 });
        
     const sendMessage = () => {
      input=document.querySelector('.message').value
     socket.emit("message",input)
+       const inputElement = document.querySelector('.message');
+        inputElement.value = "";
 };
     document.getElementById("Pictures").addEventListener('click',()=>{
         const imageInput=document.getElementById("imageInput")
@@ -123,6 +127,12 @@ socket.on("message", message => {
             imageElement.src = imageUrl;
             chatDiv.appendChild(imageElement);
         });
+        document.addEventListener('keydown',(event)=>{
+          if(event.key==="Enter"){
+            sendMessage()
+          }
+        })
+
 
 
  
