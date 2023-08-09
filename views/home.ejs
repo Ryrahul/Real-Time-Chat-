@@ -5,30 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <style>
+        <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+
+    #chat {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 20px auto;
+        max-width: 600px;
+        background-color: white;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        max-height: 400px;
+        border-radius: 5px;
+    }
+
+    .message {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .message:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+    }
+
+    button {
+        padding: 8px 16px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    /* Style for the upload button */
+    #Pictures {
+        margin-left: 10px;
+        background-color: #28a745;
+    }
+
+    #Pictures:hover {
+        background-color: #218838;
+    }
+</style>
+
+    </style>
+
 </head>
 <body>
     <input type="text" class="message">
+    <input type="file" id="imageInput">
     <button onclick="sendMessage()">Send Message</button>
-    <h1></h1>
+    <button id="Pictures">Upload</button>
+    <div id="chat">
     <script>
         
            
-        const socket = io("http://localhost:3001");
+    const socket = io("http://localhost:3001");
+    socket.emit("connection")
 
-        socket.emit("connection", () => {
-            console.log("Connected to server");
-        });
-        socket.on('message',(data)=>{
-            document.querySelector('h1').innerHTML=data
-        })
-        const sendMessage = () => {
-            input=document.querySelector('.message').value
-            socket.emit("message",input)
-
-           
-            
-            
+socket.on("message", message => {
+    const chatDiv = document.getElementById("chat");
+    const messageDiv = document.createElement("div");
+    messageDiv.textContent = message;
+    chatDiv.appendChild(messageDiv);
+});
+       
+    const sendMessage = () => {
+     input=document.querySelector('.message').value
+    socket.emit("message",input)
+};
+    document.getElementById("Pictures").addEventListener('click',()=>{
+        const imageInput=document.getElementById("imageInput")
+        const imageFile=imageInput.files[0]
+        
+        if (imageFile) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const imageBlob = event.target.result;
+                socket.emit("image", imageBlob);
             };
+            reader.readAsArrayBuffer(imageFile);
+        }
+    });
+    socket.on("image", imageBlob => {
+            const chatDiv = document.getElementById("chat");
+            const imageElement = document.createElement("img");
+            const blob = new Blob([imageBlob], { type: "img/jpeg" }); 
+            const imageUrl = URL.createObjectURL(blob);
+            imageElement.src = imageUrl;
+            chatDiv.appendChild(imageElement);
+        });
+
+
+ 
+          
 
      
     </script>
