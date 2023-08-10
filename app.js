@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
-const fs = require("fs");
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 app.set("view engine", "ejs");
 const users = app.get("/home", (req, res) => {
